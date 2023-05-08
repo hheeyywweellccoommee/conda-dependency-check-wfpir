@@ -85,7 +85,7 @@ def main(input_file, output_file):
     table["version"] = table["version"].apply(lambda x: f"_{x}_")
     table.columns = table.columns.map(mapper={"name": "Package", "version": "Version", "vulnerability": "Vulnerability"})
 
-    message = "## Vulnerability Report\n\n  _This is an automated issue opened by the Conda dependency checker workflow._\n\n"
+    message = "## Vulnerability Report\n\n  _This is an automated issue opened by the Conda dependency checker workflow._\n\n<br>\n\n"
     body = message + table.reset_index(drop=True).to_markdown(index=False)
 
     with open(output_file, "w") as f:
