@@ -35,7 +35,8 @@ jobs:
           activate-environment: ${{ env.ENVIRONMENT_NAME }}
 
       - name: Run Jake
-        run: conda list -n ${{ env.ENVIRONMENT_NAME }} --explicit | jake ddt -o report.json --output-format json
+        run: jake ddt -o report.json --output-format json
+        shell: bash -el {0}
 
       - name: Create Issue Body
         run: python .ci-helpers/report.py -i report.json -o issue-body.md
