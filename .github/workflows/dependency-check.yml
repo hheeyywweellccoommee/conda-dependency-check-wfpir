@@ -10,9 +10,6 @@ env:
   ENVIRONMENT_FILE: 'example/environment.yml'
   ENVIRONMENT_NAME: 'example'
 
-defaults:
-  run:
-
 jobs:
   report:
     runs-on: ubuntu-latest
