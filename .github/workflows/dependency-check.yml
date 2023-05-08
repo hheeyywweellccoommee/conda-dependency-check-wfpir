@@ -10,6 +10,10 @@ env:
   ENVIRONMENT_FILE: 'example/environment.yml'
   ENVIRONMENT_NAME: 'example'
 
+defaults:
+  run:
+    shell: bash -l {0}
+
 jobs:
   report:
     runs-on: ubuntu-latest
@@ -33,11 +37,9 @@ jobs:
           miniforge-variant: Mambaforge
           environment-file: ${{ env.ENVIRONMENT_FILE }}
           activate-environment: ${{ env.ENVIRONMENT_NAME }}
-          auto-activate-base: false
 
       - name: Run Jake
         run: jake ddt -o report.json --output-format json
-        shell: bash -el {0}
 
       - name: Create Issue Body
         run: python .ci-helpers/report.py -i report.json -o issue-body.md
