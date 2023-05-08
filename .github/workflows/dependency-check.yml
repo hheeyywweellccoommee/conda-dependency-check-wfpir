@@ -32,10 +32,10 @@ jobs:
           miniforge-version: latest
           environment-file: ${{ env.ENVIRONMENT_FILE }}
           activate-environment: ${{ env.ENVIRONMENT_NAME }}
+          auto-activate-base: false
 
       - name: Run Jake
-        run: conda list --explicit | jake ddt -o report.json --output-format json
-        shell: bash -el {0}
+        run: conda list -n ${{ env.ENVIRONMENT_NAME }} --explicit | jake ddt -o report.json --output-format json
 
       - name: Create Issue Body
         run: python .ci-helpers/report.py -i report.json -o issue-body.md
@@ -44,6 +44,7 @@ jobs:
       - name: Get Current Date
         run: |
           echo "CURRENT_DATE=$(date +'%b %d, %Y')" >> "$GITHUB_ENV"
+        if: failure()
 
       - name: Open New Issue
         uses: peter-evans/create-issue-from-file@v4
