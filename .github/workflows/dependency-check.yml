@@ -1,0 +1,37 @@
+name: dependency-check
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+  workflow_dispatch:
+
+env:
+  ENVIRONMENT_FILE: 'example/environment.yml'
+  ENVIRONMENT_NAME: 'example'
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Packages
+        run: pip install jake==3.0.0 pandas==1.5.3 tabulate==0.9.0
+
+      - name: Setup Environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniforge-version: latest
+          environment-file: ${{ env.ENVIRONMENT_FILE }}
+          activate-environment: ${{ env.ENVIRONMENT_NAME }}
+
+      - name: Run Jake
+        run: conda list --explicit | jake ddt -o report.json --output-format json
+        shell: bash -el {0}
+
+      - name: Debug
+        run: cat report.json
