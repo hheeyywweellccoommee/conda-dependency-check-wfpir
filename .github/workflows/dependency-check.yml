@@ -34,10 +34,10 @@ jobs:
         run: mamba install jake=3.0.0 pandas=1.5.3 tabulate=0.9.0
 
       - name: Create New Environment
-        run: mamba create env --file ${{ env.ENVIRONMENT_FILE }}
+        run: mamba env create --file ${{ env.ENVIRONMENT_FILE }}
 
       - name: Run Jake
-        run: conda list --name ${{ env.ENVIRONMENT_NAME }} --explicit | jake ddt -o report.json --output-format json
+        run: mamba list --name ${{ env.ENVIRONMENT_NAME }} --explicit | jake ddt -o report.json --output-format json
 
       - name: Create Issue Body
         run: python .ci-helpers/report.py -i report.json -o issue-body.md
