@@ -13,6 +13,8 @@ env:
 jobs:
   report:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v3
 
@@ -36,7 +38,7 @@ jobs:
         shell: bash -el {0}
 
       - name: Create Issue Body
-        run: python .ci-helpers/report.py -i report.json -o body.md
+        run: python .ci-helpers/report.py -i report.json -o issue-body.md
         if: failure()
 
       - name: Get Current Date
@@ -47,7 +49,7 @@ jobs:
         uses: peter-evans/create-issue-from-file@v4
         with:
           title: Security alert updates (${{ env.CURRENT_DATE }})
-          content-filepath: ./body.md
+          content-filepath: ./issue-body.md
           labels: |
             report
             automated issue
