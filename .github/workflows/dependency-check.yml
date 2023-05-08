@@ -30,9 +30,9 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           miniforge-version: latest
+          miniforge-variant: Mambaforge
           environment-file: ${{ env.ENVIRONMENT_FILE }}
           activate-environment: ${{ env.ENVIRONMENT_NAME }}
-          auto-activate-base: false
 
       - name: Run Jake
         run: conda list -n ${{ env.ENVIRONMENT_NAME }} --explicit | jake ddt -o report.json --output-format json
