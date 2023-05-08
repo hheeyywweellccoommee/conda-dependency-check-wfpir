@@ -36,8 +36,11 @@ jobs:
       - name: Create New Environment
         run: mamba env create --file ${{ env.ENVIRONMENT_FILE }}
 
-      - name: Run Jake
-        run: mamba list --name ${{ env.ENVIRONMENT_NAME }} --explicit | jake ddt -o report.json --output-format json
+      - name: Debug
+        run: mamba env list
+
+      - name: Create Jake Report
+        run: mamba list -n ${{ env.ENVIRONMENT_NAME }} --explicit | jake ddt -o report.json --output-format json
 
       - name: Create Issue Body
         run: python .ci-helpers/report.py -i report.json -o issue-body.md
