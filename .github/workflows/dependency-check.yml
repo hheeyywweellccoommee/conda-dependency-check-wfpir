@@ -10,10 +10,6 @@ env:
   ENVIRONMENT_FILE: 'example/environment.yml'
   ENVIRONMENT_NAME: 'example'
 
-defaults:
-  run:
-    shell: bash -l {0}
-
 jobs:
   report:
     runs-on: ubuntu-latest
@@ -22,32 +18,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install Packages
-        run: pip install jake==3.0.0 pandas==1.5.3 tabulate==0.9.0
-
-      - name: Setup Environment
+      - name: Setup Mambaforge
         uses: conda-incubator/setup-miniconda@v2
         with:
           miniforge-version: latest
           miniforge-variant: Mambaforge
-          environment-file: ${{ env.ENVIRONMENT_FILE }}
-          activate-environment: ${{ env.ENVIRONMENT_NAME }}
+          auto-activate-base: true
+          activate-environment: ""
+
+      - name: Install Packages
+        run: mamba install jake=3.0.0 pandas=1.5.3 tabulate=0.9.0
+
+      - name: Create New Environment
+        run: mamba create env --file ${{ env.ENVIRONMENT_FILE }}
 
       - name: Run Jake
-        run: jake ddt -o report.json --output-format json
+        run: conda list --name ${{ env.ENVIRONMENT_NAME }} --explicit | jake ddt -o report.json --output-format json
+        shell: bash -el {0}
 
       - name: Create Issue Body
         run: python .ci-helpers/report.py -i report.json -o issue-body.md
         if: failure()
 
       - name: Get Current Date
-        run: |
-          echo "CURRENT_DATE=$(date +'%b %d, %Y')" >> "$GITHUB_ENV"
+        run: echo "CURRENT_DATE=$(date +'%b %d, %Y')" >> "$GITHUB_ENV"
         if: failure()
 
       - name: Open New Issue
