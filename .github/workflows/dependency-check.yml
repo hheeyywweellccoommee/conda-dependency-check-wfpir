@@ -35,6 +35,20 @@ jobs:
         run: conda list --explicit | jake ddt -o report.json --output-format json
         shell: bash -el {0}
 
-      - name: Debug
-        run: cat report.json
+      - name: Create Issue Body
+        run: python .ci-helpers/report.py -i report.json -o body.md
+        if: failure()
+
+      - name: Get Current Date
+        run: |
+          echo "CURRENT_DATE=$(date +'%b %d, %Y')" >> "$GITHUB_ENV"
+
+      - name: Open New Issue
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: Security alert updates (${{ env.CURRENT_DATE }})
+          content-filepath: ./body.md
+          labels: |
+            report
+            automated issue
         if: failure()
