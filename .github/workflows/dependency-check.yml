@@ -33,6 +33,7 @@ jobs:
           miniforge-variant: Mambaforge
           environment-file: ${{ env.ENVIRONMENT_FILE }}
           activate-environment: ${{ env.ENVIRONMENT_NAME }}
+          auto-activate-base: false
 
       - name: Run Jake
         run: jake ddt -o report.json --output-format json
